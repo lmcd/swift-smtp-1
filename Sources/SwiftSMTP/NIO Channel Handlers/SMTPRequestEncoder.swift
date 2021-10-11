@@ -23,7 +23,7 @@ struct SMTPRequestEncoder: MessageToByteEncoder {
             Content-Type: \($0.contentType)\r\n\
             Content-Transfer-Encoding: base64\r\n\
             Content-Disposition: attachment; filename="\($0.name)"\r\n\r\n\
-            \($0.data.base64EncodedString())\r\n
+            \($0.data.base64EncodedString(options: .lineLength76Characters))\r\n
             """
         }.joined(separator: "\r\n--\(boundary)\r\n")
     }
@@ -37,9 +37,9 @@ struct SMTPRequestEncoder: MessageToByteEncoder {
         case .beginAuthentication:
             out.writeString("AUTH LOGIN")
         case .authUser(let user):
-            out.writeBytes(Data(user.utf8).base64EncodedData())
+            out.writeBytes(Data(user.utf8).base64EncodedData(options: .lineLength76Characters))
         case .authPassword(let password):
-            out.writeBytes(Data(password.utf8).base64EncodedData())
+            out.writeBytes(Data(password.utf8).base64EncodedData(options: .lineLength76Characters))
         case .mailFrom(let from):
             out.writeString("MAIL FROM:<\(from)>")
         case .recipient(let rcpt):
