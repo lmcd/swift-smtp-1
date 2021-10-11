@@ -78,8 +78,10 @@ struct SMTPRequestEncoder: MessageToByteEncoder {
                 --\(boundary)--\r\n
                 """
             case (.html(let html), true):
+                out.writeString("Content-Transfer-Encoding: BASE64\r\n")
+
                 contentType = #"text/html; charset="UTF-8""#
-                bodyAndAttachments = html + "\r\n"
+                bodyAndAttachments = Data(html.utf8).base64EncodedString(options: .lineLength76Characters) + "\r\n"
             case (.html(let html), false):
                 let boundary = createMultipartBoundary()
                 contentType = #"multipart/mixed; boundary=\#(boundary)"#
